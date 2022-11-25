@@ -2,12 +2,17 @@ version: 1
 frontend:
   phases:
     # IMPORTANT - Please verify your build commands
+    preBuild:
+      commands:
+        - npm ci
     build:
-      commands: npm run build
+      commands:
+        - npm run build
   artifacts:
     # IMPORTANT - Please verify your build output directory
-    baseDirectory: ./velcronics/dist/
+    baseDirectory: build
     files:
       - '**/*'
   cache:
-    paths: []
+    paths:
+      - node_modules/**/*
