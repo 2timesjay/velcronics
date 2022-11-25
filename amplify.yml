@@ -7,7 +7,11 @@ frontend:
         - npm ci
     build:
       commands:
-        - npm run build
+          - echo 'BEFORE BUILD'
+          - ls
+          - npm run build
+          - echo 'AFTER BUILD'
+          - ls
   artifacts:
     # IMPORTANT - Please verify your build output directory
     baseDirectory: dist
