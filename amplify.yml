@@ -6,7 +6,7 @@ frontend:
       commands: npm run build
   artifacts:
     # IMPORTANT - Please verify your build output directory
-    baseDirectory: dist/
+    baseDirectory: ./velcronics/dist/
     files:
       - '**/*'
   cache:
