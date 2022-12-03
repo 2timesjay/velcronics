@@ -12,6 +12,7 @@ frontend:
           - npm run build
           - echo 'AFTER BUILD'
           - ls
+          - ls ./dist/
   artifacts:
     # IMPORTANT - Please verify your build output directory
     baseDirectory: dist
