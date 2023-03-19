@@ -10,9 +10,9 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         books: resolve(__dirname, 'books/index.html'),
         personal: resolve(__dirname, 'personal/index.html'),
-        processing: resolve(__dirname, 'projects/processing/index.html'),
+        visualizations: resolve(__dirname, 'projects/visualizations/index.html'),
         botorch: resolve(__dirname, 'projects/botorch/index.html'),
-        spw: resolve(__dirname, 'projects/spw/index.html'),
+        sidebyside: resolve(__dirname, 'projects/sidebyside/index.html'),
       }
     }
   },
