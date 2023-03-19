@@ -113,7 +113,17 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
           {columns[0].map((_, rowIndex) => (
             <tr key={rowIndex} className={addingRow && rowIndex === columns[0].length - 1 ? 'new-row' : ''}>
               {columns.map((column, columnIndex) => (
-                <td key={`${columnIndex}-${rowIndex}`}>{column[rowIndex]}</td>
+                <td key={`${columnIndex}-${rowIndex}`}>
+                  {addingRow && rowIndex === columns[0].length - 1 ? (
+                    <input
+                      type="number"
+                      value={column[rowIndex] === null ? '' : column[rowIndex]}
+                      onChange={(e) => handleEdit(columnIndex, rowIndex, e.target.value)}
+                    />
+                  ) : (
+                    column[rowIndex]
+                  )}
+                </td>
               ))}
               {deltaColumns.map(([first, second]) => (
                 <td key={`${first}-${second}-${rowIndex}`} className="delta-value-cell">
@@ -127,7 +137,7 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
       <button onClick={addRow} disabled={addingRow}>Add Row</button>
       {addingRow && <button onClick={confirmRow}>Confirm Row</button>}
       <button onClick={() => downloadCSV("row")}>Download as Row-oriented CSV</button>
-      <button onClick={() => downloadCSV("column")}>Download as Row-oriented CSV</button>
+      <button onClick={() => downloadCSV("column")}>Download as Column-oriented CSV</button>
     </div>
   );
 };
