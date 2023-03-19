@@ -17,6 +17,7 @@ import './Table.css';
 const Table = ({ columnNames, columnValues, deltaColumns }) => {
   const [columns, setColumns] = useState(columnValues);
   const [sortOrder, setSortOrder] = useState("asc");
+  const [addingRow, setAddingRow] = useState(false);
 
   const sortTable = (columnIndex) => {
     const newColumns = [...columns];
@@ -32,6 +33,16 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
 
     setColumns(newColumns);
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
+  const confirmRow = () => {
+    setAddingRow(false);
+  };
+
+  const handleEdit = (columnIndex: number, rowIndex: number, value: string) => {
+    const newColumns = [...columns];
+    newColumns[columnIndex][rowIndex] = value === '' ? null : parseFloat(value);
+    setColumns(newColumns);
   };
 
   const downloadCSV = (orientation) => {
@@ -63,8 +74,9 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
   };
 
   const addRow = () => {
-    const newColumns = columns.map((column) => [...column, null]);
+    const newColumns = columns.map((column) => [...column, '']);
     setColumns(newColumns);
+    setAddingRow(true);
   };
 
   const deltaColumn = (columnIndex) => {
@@ -99,7 +111,7 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
         </thead>
         <tbody>
           {columns[0].map((_, rowIndex) => (
-            <tr key={rowIndex}>
+            <tr key={rowIndex} className={addingRow && rowIndex === columns[0].length - 1 ? 'new-row' : ''}>
               {columns.map((column, columnIndex) => (
                 <td key={`${columnIndex}-${rowIndex}`}>{column[rowIndex]}</td>
               ))}
@@ -112,6 +124,8 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
           ))}
         </tbody>
       </table>
+      <button onClick={addRow} disabled={addingRow}>Add Row</button>
+      {addingRow && <button onClick={confirmRow}>Confirm Row</button>}
       <button onClick={() => downloadCSV("row")}>Download as Row-oriented CSV</button>
       <button onClick={() => downloadCSV("column")}>Download as Row-oriented CSV</button>
     </div>
