@@ -14,10 +14,23 @@
 import React, { useState } from 'react';
 import './Table.css';
 
-const Table = ({ columnNames, columnValues, deltaColumns }) => {
+interface CallbackColumn {
+  columnName: string;
+  callback: (rowData: Record<string, string | number | null>) => string | number | null;
+}
+
+interface Props {
+  columnNames: string[];
+  columnValues: (string | number | null)[][];
+  deltaColumns: [string, string][];
+  callbackColumns: CallbackColumn[];
+}
+
+const Table: React.FC<Props> = ({ columnNames, columnValues, deltaColumns, callbackColumns }) => {
   const [columns, setColumns] = useState(columnValues);
   const [sortOrder, setSortOrder] = useState("asc");
   const [addingRow, setAddingRow] = useState(false);
+  const [focusedRowIndex, setFocusedRowIndex] = useState<number | null>(null);
 
   const sortTable = (columnIndex) => {
     const newColumns = [...columns];
@@ -44,6 +57,27 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
     newColumns[columnIndex][rowIndex] = value === '' ? null : parseFloat(value);
     setColumns(newColumns);
   };
+
+  const handleRowFocus = (rowIndex: number) => {
+    setFocusedRowIndex(focusedRowIndex === rowIndex ? null : rowIndex);
+  };
+
+  const handleCallbackClick = (callbackColumn: CallbackColumn, rowIndex: number) => {
+    const rowData = columnNames.reduce((result, columnName, columnIndex) => {
+      result[columnName] = columns[columnIndex][rowIndex];
+      return result;
+    }, {} as Record<string, string | number | null>);
+  
+    const callbackResult = callbackColumn.callback(rowData);
+  
+    const columnIndex = columnNames.indexOf(callbackColumn.columnName);
+    if (columnIndex !== -1) {
+      const newColumns = [...columns];
+      newColumns[columnIndex][rowIndex] = callbackResult;
+      setColumns(newColumns);
+    }
+  };
+  
 
   const downloadCSV = (orientation) => {
     const csvRows = [];
@@ -111,17 +145,28 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
         </thead>
         <tbody>
           {columns[0].map((_, rowIndex) => (
-            <tr key={rowIndex} className={addingRow && rowIndex === columns[0].length - 1 ? 'new-row' : ''}>
+            <tr
+              key={rowIndex}
+              className={`${addingRow && rowIndex === columns[0].length - 1 ? 'new-row' : ''} ${
+                focusedRowIndex === rowIndex ? 'focused-row' : ''
+              }`}
+              onClick={() => handleRowFocus(rowIndex)}
+            >
               {columns.map((column, columnIndex) => (
                 <td key={`${columnIndex}-${rowIndex}`}>
                   {addingRow && rowIndex === columns[0].length - 1 ? (
                     <input
-                      type="number"
+                      type="text"
                       value={column[rowIndex] === null ? '' : column[rowIndex]}
                       onChange={(e) => handleEdit(columnIndex, rowIndex, e.target.value)}
                     />
                   ) : (
-                    column[rowIndex]
+                    <div
+                      className={`cell-text ${focusedRowIndex === rowIndex ? 'focused-cell' : 'unfocused-cell'}`}
+                      dangerouslySetInnerHTML={focusedRowIndex === rowIndex ? { __html: String(column[rowIndex]) } : undefined}
+                    >
+                      {focusedRowIndex === rowIndex ? null : column[rowIndex]}
+                    </div>
                   )}
                 </td>
               ))}
@@ -130,6 +175,17 @@ const Table = ({ columnNames, columnValues, deltaColumns }) => {
                   {deltaColumn(columnNames.indexOf(first))[rowIndex]}
                 </td>
               ))}
+              {callbackColumns.map((callbackColumn) => {
+                const columnIndex = columnNames.indexOf(callbackColumn.columnName);
+                return (
+                  <td key={`${columnIndex}-${rowIndex}`}>
+                    <button onClick={(e) => { e.stopPropagation(); handleCallbackClick(callbackColumn, rowIndex); }}>
+                      Evaluate
+                    </button>
+                    {columns[columnIndex][rowIndex]}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

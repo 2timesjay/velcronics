@@ -40,3 +40,25 @@
   .new-row {
     background-color: #e0e0e0;
   }
+
+  .unfocused-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+  
+  .focused-row {
+    background-color: #e0e0e0;
+  }
+  
+  .focused-cell {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  
+  /* Optional: to limit the height of the focused cell */
+  .focused-cell-limited {
+    max-height: 200px;
+    overflow-y: auto;
+  }
