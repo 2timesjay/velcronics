@@ -3,7 +3,7 @@ import './App.css';
 import Table from './Table';
 
 function App() {
-  const columnNames = ['A', 'B', 'C'];
+  const columnNames = ['A', 'B', 'C', 'D'];
   const columnValues = [
     [
       'This is a long text that will be elided when not focused',

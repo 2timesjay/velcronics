@@ -23,17 +23,37 @@ interface Props {
   columnNames: string[];
   columnValues: (string | number | null)[][];
   deltaColumns: [string, string][];
-  callbackColumns: CallbackColumn[];
+  callbackColumns?: CallbackColumn[];
 }
 
-const Table: React.FC<Props> = ({ columnNames, columnValues, deltaColumns, callbackColumns }) => {
-  const [columns, setColumns] = useState(columnValues);
+const Table: React.FC<Props> = ({
+  columnNames,
+  columnValues,
+  deltaColumns,
+  callbackColumns = [],
+}) => {
+  const initializeCallbackColumns = (
+    callbackColumns: CallbackColumn[],
+    rowCount: number
+  ): (null | string | number)[][] => {
+    if (callbackColumns.some((col) => !col.columnName)) {
+      throw new Error("All callback columns must have a name.");
+    }    
+    return callbackColumns.map(() => Array(rowCount).fill(null));
+  };
+
+  const initialColumns = [
+    ...columnValues,
+    ...initializeCallbackColumns(callbackColumns, columnValues[0].length),
+  ];
+  const [columns, setColumns] = useState<(null | string | number)[][]>(initialColumns);  
   const [sortOrder, setSortOrder] = useState("asc");
   const [addingRow, setAddingRow] = useState(false);
   const [focusedRowIndex, setFocusedRowIndex] = useState<number | null>(null);
 
   const sortTable = (columnIndex) => {
     const newColumns = [...columns];
+    console.log("Sorting by column", columnIndex, "in order", sortOrder);
     newColumns.forEach((column) => {
       column.sort((a, b) => {
         if (sortOrder === "asc") {
@@ -68,12 +88,16 @@ const Table: React.FC<Props> = ({ columnNames, columnValues, deltaColumns, callb
       return result;
     }, {} as Record<string, string | number | null>);
   
+    console.log("rowData", rowData);
     const callbackResult = callbackColumn.callback(rowData);
+    console.log("callbackResult", callbackResult);
   
     const columnIndex = columnNames.indexOf(callbackColumn.columnName);
+    console.log("columnIndex", columnIndex)
     if (columnIndex !== -1) {
       const newColumns = [...columns];
       newColumns[columnIndex][rowIndex] = callbackResult;
+      console.log("newColumns", newColumns);
       setColumns(newColumns);
     }
   };
@@ -182,7 +206,7 @@ const Table: React.FC<Props> = ({ columnNames, columnValues, deltaColumns, callb
                     <button onClick={(e) => { e.stopPropagation(); handleCallbackClick(callbackColumn, rowIndex); }}>
                       Evaluate
                     </button>
-                    {columns[columnIndex][rowIndex]}
+                    {columns?.[columnIndex]?.[rowIndex] ?? null}
                   </td>
                 );
               })}
