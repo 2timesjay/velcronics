@@ -1,0 +1,64 @@
+.table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: #f2f2f2;
+    cursor: pointer;
+  }
+  
+  .delta-column {
+    background-color: #ffcc00;
+  }
+  
+  .delta-value {
+    display: inline-block;
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+  
+  .positive {
+    background-color: #90ee90;
+  }
+  
+  .negative {
+    background-color: #ff7f7f;
+  }
+  
+  .delta-value-cell {
+    text-align: center;
+  }
+  
+  .new-row {
+    background-color: #e0e0e0;
+  }
+
+  .unfocused-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+  
+  .focused-row {
+    background-color: #e0e0e0;
+  }
+  
+  .focused-cell {
+    white-space: normal;
+    word-wrap: break-word;
+  }
+  
+  /* Optional: to limit the height of the focused cell */
+  .focused-cell-limited {
+    max-height: 200px;
+    overflow-y: auto;
+  }

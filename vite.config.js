@@ -1,6 +1,7 @@
 // vite.config.js
-import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
 
 export default defineConfig({
   build: {
@@ -9,9 +10,11 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         books: resolve(__dirname, 'books/index.html'),
         personal: resolve(__dirname, 'personal/index.html'),
-        processing: resolve(__dirname, 'projects/processing/index.html'),
-        botorch: resolve(__dirname, 'projects/botorch/index.html')
+        visualizations: resolve(__dirname, 'projects/visualizations/index.html'),
+        botorch: resolve(__dirname, 'projects/botorch/index.html'),
+        sidebyside: resolve(__dirname, 'projects/sidebyside/index.html'),
       }
     }
-  }
-})
+  },
+  plugins: [react()],
+});
