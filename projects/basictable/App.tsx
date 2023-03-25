@@ -13,39 +13,11 @@ const rows = [
 ];
 
 function App() {
-  return <DataGrid columns={columns} rows={rows} />;
+  return (
+    <div className="App">
+      <DataGrid columns={columns} rows={rows} />;
+    </div>
+  );
 }
 
 export default App;
-// import React from "react";
-// import ReactDataGrid from "react-data-grid";
-// import "./DataGrid.css";
-
-// export default function DataGrid() {
-
-// 	const columns = [
-// 		{ key: "id", name: "ID" },
-// 		{ key: "name", name: "Name" },
-// 		{ key: "amount", name: "Amount" }
-// 	];
-
-// 	const rows = [
-// 		{ id: 0, name: "row1", amount: 10 },
-// 		{ id: 1, name: "row2", amount: 20 },
-// 		{ id: 2, name: "row3", amount: 30 }
-// 	];
-
-// //   <ReactDataGrid
-// //     columns={columns}
-// //     rowGetter={i => rows[i]}
-// //     rowsCount={3}
-// //   />
-// 	return (
-// 		<div className="DataGrid">
-// 			<ReactDataGrid
-// 				columns={columns}
-// 				rows={rows}
-// 			/>
-// 		</div>
-// 	);
-// }
