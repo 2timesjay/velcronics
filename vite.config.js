@@ -13,6 +13,7 @@ export default defineConfig({
         visualizations: resolve(__dirname, 'projects/visualizations/index.html'),
         botorch: resolve(__dirname, 'projects/botorch/index.html'),
         sidebyside: resolve(__dirname, 'projects/sidebyside/index.html'),
+        basictable: resolve(__dirname, 'projects/basictable/index.html'),
       }
     }
   },
