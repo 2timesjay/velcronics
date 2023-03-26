@@ -10,30 +10,25 @@ const SummaryRow = ({ id, totalCount, deltaSum }) => {
 const deltaValues = [-1, 0, 1];
 
 const columns = [
-  { key: 'id', name: 'ID', width: 80 },
-  { key: 'title', name: 'Title', width: 80},
+  { key: 'id', name: 'ID' },
+  { key: 'title', name: 'Title' },
   {
     key: 'delta',
     name: 'Delta',
-    width: 80,
     editable: true,
-    formatter({ row, onRowChange }) {
-      const deltaValueIndex = deltaValues.indexOf(row.delta);
-  
-      const handleDeltaChange = () => {
-        console.log(row);
-        // onRowChange({
-        //   ...row,
-        //   delta: deltaValues[(deltaValueIndex + 1) % deltaValues.length],
-        // });
-        row['delta'] = deltaValues[(deltaValueIndex + 1) % deltaValues.length];
-        console.log(row);
-        onRowChange({
-          ...row
-        });
-      };
-  
-      return <DeltaCellFormatter value={row.delta} onChange={handleDeltaChange} />;
+    width: 80,
+    formatter: ({ row, onRowChange }) => {
+      var deltaValuesIndex = deltaValues.findIndex((v) => v === row.delta);
+      return (
+        <DeltaCellFormatter
+          value={row.delta}
+          onChange={() => {
+            const newDeltaValuesIndex = (deltaValuesIndex + 1) % deltaValues.length;
+            console.log("new row", { ...row, delta: deltaValues[newDeltaValuesIndex] })
+            onRowChange({ ...row, delta: deltaValues[newDeltaValuesIndex] });
+          }}
+        />
+      );
     },
     summaryFormatter: ({ row }) => {
       return (
@@ -65,19 +60,12 @@ function App() {
     return [summaryRow];
   }, [rowsState]);
 
-  const handleRowChange = (updatedRow) => {
-    const rowIndex = rowsState.findIndex((r) => r.id === updatedRow.id);
-    const newRows = [...rowsState];
-    newRows[rowIndex] = updatedRow;
-    setRowsState(newRows);
-  };
-
   return (
     <div className="App">
       <DataGrid
         columns={columns}
         rows={rowsState}
-        onRowsChange={handleRowChange}
+        onRowsChange={setRowsState}
         topSummaryRows={summaryRows}
         bottomSummaryRows={summaryRows}
       />
