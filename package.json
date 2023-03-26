@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-data-grid": "^7.0.0-beta.27",
     "react-dom": "^18.2.0",

@@ -1,67 +1,86 @@
-import React from "react";
+import React, { useMemo, useState } from 'react';
+import DataGrid from 'react-data-grid';
+import DeltaCellFormatter from './DeltaCellFormatter';
 import 'react-data-grid/lib/styles.css';
-import DataGrid, { SelectColumn, textEditor, SelectCellFormatter } from 'react-data-grid';
-import DeltaCellFormatter from "./DeltaCellFormatter";
 
+const SummaryRow = ({ id, totalCount, deltaSum }) => {
+  return <>{`${Math.floor((100 * deltaSum) / totalCount)}%`}</>;
+};
 
-interface SummaryRow {
-  id: string;
-  totalCount: number;
-  deltaSum: number;
-}
-
-const deltaValues = [-1, 0, 1]
+const deltaValues = [-1, 0, 1];
 
 const columns = [
-  { key: 'id', name: 'ID' },
-  { key: 'title', name: 'Title' },
-  { 
-    key: 'delta', 
+  { key: 'id', name: 'ID', width: 80 },
+  { key: 'title', name: 'Title', width: 80},
+  {
+    key: 'delta',
     name: 'Delta',
     width: 80,
-    formatter({ row, onRowChange, deltaValueIndex=0 }) {
+    editable: true,
+    formatter({ row, onRowChange }) {
+      const deltaValueIndex = deltaValues.indexOf(row.delta);
+  
+      const handleDeltaChange = () => {
+        console.log(row);
+        // onRowChange({
+        //   ...row,
+        //   delta: deltaValues[(deltaValueIndex + 1) % deltaValues.length],
+        // });
+        row['delta'] = deltaValues[(deltaValueIndex + 1) % deltaValues.length];
+        console.log(row);
+        onRowChange({
+          ...row
+        });
+      };
+  
+      return <DeltaCellFormatter value={row.delta} onChange={handleDeltaChange} />;
+    },
+    summaryFormatter: ({ row }) => {
       return (
-        <DeltaCellFormatter
-          value={row.deltaValue}
-          onChange={() => {
-            onRowChange(
-              { ...row, deltaValueIndex = (deltaValueIndex + 1) % deltaValues.length}
-            );
-          }}
-          deltaValue={deltaValues[deltaValueIndex]}
+        <SummaryRow
+          id={row.id}
+          totalCount={row.totalCount}
+          deltaSum={row.deltaSum}
         />
       );
     },
-    // summaryFormatter({ row: { deltaSum, totalCount } }) {
-    //   return <>{`${Math.floor((100 * deltaSum) / totalCount)}%`}</>;
-    // }
-  }
+  },
 ];
 
-// const summaryRows = useMemo(() => {
-//   const summaryRow: SummaryRow = {
-//     id: 'total_0',
-//     totalCount: rows.length,
-//     deltaSum: rows.reduce((partialSum, a) => partialSum + a, 0)
-//   };
-//   return [summaryRow];
-// }, [rows]);
-
 const rows = [
-  { id: 0, title: 'Example', delta: "-" },
-  { id: 1, title: 'Demo', delta: "+" }
-  { id: 2, title: 'Illustration', delta: "0" }
+  { id: 0, title: 'Example', delta: -1 },
+  { id: 1, title: 'Demo', delta: 1 },
+  { id: 2, title: 'Illustration', delta: 0 },
 ];
 
 function App() {
+  const [rowsState, setRowsState] = useState(rows);
+
+  const summaryRows = useMemo(() => {
+    const summaryRow = {
+      id: 'total_0',
+      totalCount: rowsState.length,
+      deltaSum: rowsState.reduce((partialSum, { delta }) => partialSum + delta, 0),
+    };
+    return [summaryRow];
+  }, [rowsState]);
+
+  const handleRowChange = (updatedRow) => {
+    const rowIndex = rowsState.findIndex((r) => r.id === updatedRow.id);
+    const newRows = [...rowsState];
+    newRows[rowIndex] = updatedRow;
+    setRowsState(newRows);
+  };
+
   return (
     <div className="App">
-      <DataGrid 
-        columns={columns} 
-        rows={rows} 
-        // topSummaryRows={summaryRows}
-        // bottomSummaryRows={summaryRows}
-      />;
+      <DataGrid
+        columns={columns}
+        rows={rowsState}
+        onRowsChange={handleRowChange}
+        topSummaryRows={summaryRows}
+        bottomSummaryRows={summaryRows}
+      />
     </div>
   );
 }
