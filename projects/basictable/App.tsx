@@ -95,10 +95,6 @@ function App() {
           <DeltaCellFormatter
             value={row.delta}
             onChange={() => {
-              onRowChange({
-                ...row,
-                delta: deltaValues[(deltaValueIndex + 1) % deltaValues.length],
-              });
               handleDeltaChange(
                 row.id, 
                 deltaValues[(deltaValueIndex + 1) % deltaValues.length]
@@ -128,15 +124,27 @@ function App() {
     setRows(
       rows.map((r, idx) => (idx === rowIdx ? { ...r, delta: newDelta } : r))
     );
-    setUnsavedChanges((prev) => [...prev, { rowIdx, delta: newDelta }]);
+    setUnsavedChanges((prev) => {
+      const existingChange = prev.find((change) => change.rowIdx === rowIdx);
+      if (existingChange) {
+        return prev.map((change) =>
+          change.rowIdx === rowIdx ? { ...change, delta: newDelta } : change
+        );
+      } else {
+        return [...prev, { rowIdx, delta: newDelta }];
+      }
+    });
   };
   
   const saveChanges = async () => {
+    console.log("unsaved changes", unsavedChanges);
     try {
       // Replace with your service endpoint URL
-      const response = await axios.post("https://your-service-endpoint-url.com/api/save-changes", {
-        changes: unsavedChanges,
-      });
+      for (const change of unsavedChanges) {
+        const response = await axios.post("https://your-service-endpoint-url.com/api/save-change", {
+          change: {"row": change.rowIdx, "column": 2, "new_value": change.delta}
+        });
+      }
 
       if (response.status === 200) {
         setUnsavedChanges([]);
@@ -158,8 +166,8 @@ function App() {
   );
 
   return (
-    <div className="App">
-      <button onClick={saveChanges}>Save</button>
+    <div className="App" tabIndex={0}>
+      <button onClick={saveChanges}>Save Changes</button>
       <DataGrid
         columns={columns}
         rows={rows}
