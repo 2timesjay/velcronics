@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import axios from "axios"; // Import axios or your preferred library to make HTTP requests
+import React, { useMemo, useState, useCallback } from 'react';
 import DataGrid from 'react-data-grid';
 import 'react-data-grid/lib/styles.css';
 
@@ -10,7 +11,13 @@ interface SummaryRow {
 
 const deltaValues = [-1, 0, 1];
 
-function DeltaCellFormatter({ value, onChange }: { value: number; onChange: () => void }) {
+interface DeltaCellFormatterProps {
+  value: number;
+  onChange(rowIdx: number, newDelta: number): void;
+  isUnsaved: boolean;
+}
+
+const DeltaCellFormatter: React.FC<DeltaCellFormatterProps> = ({ value, onChange, isUnsaved }) => {
   let backgroundColor = '';
   switch (value) {
     case -1:
@@ -23,6 +30,7 @@ function DeltaCellFormatter({ value, onChange }: { value: number; onChange: () =
       backgroundColor = '#fff';
       break;
   }
+  const textStyle = isUnsaved ? { color: "grey" } : {};
 
   return (
     <div 
@@ -33,31 +41,70 @@ function DeltaCellFormatter({ value, onChange }: { value: number; onChange: () =
         borderRadius: '5px',
         textAlign: 'center',
         cursor: 'pointer',
+        ...textStyle
       }}>
       {value}
     </div>
   );
-}
+};
 
-const columns = [
-  { key: "id", name: "ID" },
-  { key: "title", name: "Title" },
-  {
-    key: "delta",
-    name: "Delta",
-    width: 80,
-    formatter({ row, onRowChange }: GridCellProps) {
-      const deltaValueIndex = deltaValues.indexOf(row.delta);
+// export default DeltaCellFormatter;
 
-      return (
-        <DeltaCellFormatter
-          value={row.delta}
-          onChange={() => {
-            onRowChange({
-              ...row,
-              delta: deltaValues[(deltaValueIndex + 1) % deltaValues.length],
-            });
-          }}
+// columns={columns.map((col) => {
+//   if (col.key === "delta") {
+//     return {
+//       ...col,
+//       formatter: (props: GridCellProps) => {
+//         const deltaValueIndex = deltaValues.indexOf(props.row.delta);
+
+//         return (
+//           <DeltaCellFormatter
+//             value={props.row.delta}
+//             onChange={handleDeltaChange}
+//             isUnsaved={isUnsaved(props.rowIdx)}
+//           />
+//         );
+//       },
+//     };
+//   }
+//   return col;
+// })}
+
+function App() {  
+  const initialRows = [
+    { id: 0, title: "Example", delta: -1 },
+    { id: 1, title: "Demo", delta: 1 },
+    { id: 2, title: "Illustration", delta: 0 },
+  ];
+
+  const [rows, setRows] = useState(initialRows);
+  const [unsavedChanges, setUnsavedChanges] = useState<Array<{ rowIdx: number; delta: number }>>([]);
+
+  const columns = [
+    { key: "id", name: "ID", width: 80 },
+    { key: "title", name: "Title", width: 80 },
+    {
+      key: "delta",
+      name: "Delta",
+      width: 80,
+      editable: true,
+      formatter({ row, onRowChange }) {
+        const deltaValueIndex = deltaValues.indexOf(row.delta);
+  
+        return (
+          <DeltaCellFormatter
+            value={row.delta}
+            onChange={() => {
+              onRowChange({
+                ...row,
+                delta: deltaValues[(deltaValueIndex + 1) % deltaValues.length],
+              });
+              handleDeltaChange(
+                row.id, 
+                deltaValues[(deltaValueIndex + 1) % deltaValues.length]
+              );
+            }}
+            isUnsaved={isUnsaved(row.id)}
           />
         );
       },
@@ -66,37 +113,63 @@ const columns = [
       },
     },
   ];
-  
-  const initialRows = [
-    { id: 0, title: "Example", delta: -1 },
-    { id: 1, title: "Demo", delta: 1 },
-    { id: 2, title: "Illustration", delta: 0 },
-  ];
-  
-  function App() {
-    const [rows, setRows] = useState(initialRows);
-  
-    const summaryRows = useMemo(() => {
-      const summaryRow: SummaryRow = {
-        id: "total_0",
-        totalCount: rows.length,
-        deltaSum: rows.reduce((partialSum, a) => partialSum + a.delta, 0),
-      };
-      return [summaryRow];
-    }, [rows]);
-  
-    return (
-      <div className="App">
-        <DataGrid
-          columns={columns}
-          rows={rows}
-          onRowsChange={setRows}
-          topSummaryRows={summaryRows}
-          bottomSummaryRows={summaryRows}
-        />
-      </div>
+
+  const summaryRows = useMemo(() => {
+    const summaryRow: SummaryRow = {
+      id: "total_0",
+      totalCount: rows.length,
+      deltaSum: rows.reduce((partialSum, a) => partialSum + a.delta, 0),
+    };
+    return [summaryRow];
+  }, [rows]);
+
+  const handleDeltaChange = (rowIdx: number, newDelta: number) => {
+    console.log("handleDeltaChange", rowIdx, newDelta)
+    setRows(
+      rows.map((r, idx) => (idx === rowIdx ? { ...r, delta: newDelta } : r))
     );
-  }
+    setUnsavedChanges((prev) => [...prev, { rowIdx, delta: newDelta }]);
+  };
   
-  export default App;
-  
+  const saveChanges = async () => {
+    try {
+      // Replace with your service endpoint URL
+      const response = await axios.post("https://your-service-endpoint-url.com/api/save-changes", {
+        changes: unsavedChanges,
+      });
+
+      if (response.status === 200) {
+        setUnsavedChanges([]);
+      } else {
+        // Handle unsuccessful save response
+        console.error("Error saving changes:", response);
+      }
+    } catch (error) {
+      // Handle request error
+      console.error("Error saving changes:", error);
+    }
+  };
+
+  const isUnsaved = useCallback(
+    (rowIdx: number) => {
+      return unsavedChanges.some((change) => change.rowIdx === rowIdx);
+    },
+    [unsavedChanges]
+  );
+
+  return (
+    <div className="App">
+      <button onClick={saveChanges}>Save</button>
+      <DataGrid
+        columns={columns}
+        rows={rows}
+        onRowsChange={setRows}
+        topSummaryRows={summaryRows}
+        bottomSummaryRows={summaryRows}
+        // onCellClick={(e) => console.log(e)}
+      />
+    </div>
+  );
+}
+
+export default App;
