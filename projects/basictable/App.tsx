@@ -140,11 +140,10 @@ function App() {
     console.log("unsaved changes", unsavedChanges);
     try {
       // Replace with your service endpoint URL
-      for (const change of unsavedChanges) {
-        const response = await axios.post("https://your-service-endpoint-url.com/api/save-change", {
-          change: {"row": change.rowIdx, "column": 2, "new_value": change.delta}
-        });
-      }
+      var changes = unsavedChanges.map((change) => {
+        return {row: change.rowIdx, column: 2, new_value: change.delta}
+      });
+      const response = await axios.post("http://localhost:5000/update", changes);
 
       if (response.status === 200) {
         setUnsavedChanges([]);
@@ -158,6 +157,32 @@ function App() {
     }
   };
 
+  const loadState = async () => {
+    console.log("unsaved changes", unsavedChanges);
+    try {
+      const response = await axios.get("http://localhost:5000/load_all");
+
+      if (response.status === 200) {
+        console.log("response", response.data)
+        // Create dict from row_id to delta from [{row_id: 0, delta: 1}, ...] response
+        const rowIdToDelta = response.data.reduce((acc, row) => {
+          acc[row.row] = row.value;  // TODO: Harmonize names
+          return acc;
+        }, {} as Record<number, number>);
+        setRows(
+          rows.map((r, idx) => (idx in rowIdToDelta ? { ...r, delta: rowIdToDelta[idx] } : r))
+        );
+        setUnsavedChanges([]);
+      } else {
+        // Handle unsuccessful save response
+        console.error("Bad server response when loading state:", response);
+      }
+    } catch (error) {
+      // Handle request error
+      console.error("Error loading state:", error);
+    }
+  };
+
   const isUnsaved = useCallback(
     (rowIdx: number) => {
       return unsavedChanges.some((change) => change.rowIdx === rowIdx);
@@ -168,6 +193,7 @@ function App() {
   return (
     <div className="App" tabIndex={0}>
       <button onClick={saveChanges}>Save Changes</button>
+      <button onClick={loadState}>Load State</button>
       <DataGrid
         columns={columns}
         rows={rows}
