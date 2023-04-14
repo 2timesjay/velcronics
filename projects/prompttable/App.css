@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .App {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    word-wrap: break-word;
+  }
+  
+  th,
+  td {
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  tr:hover {
+    background-color: #f2f2f2;
+  }
+  
+  form {
+    margin-bottom: 1rem;
+  }
+  
+  form label {
+    display: inline-block;
+    margin-right: 8px;
+  }
+  
+  form fieldset {
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+  }
+  
+  form legend {
+    padding: 0 4px;
+  }
+  
