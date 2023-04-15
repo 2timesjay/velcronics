@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Configuration, OpenAIApi } from 'openai';
 
 const Configurator = ({ testCaseSets, metricsPool, onConfigChange }) => {
@@ -8,24 +8,39 @@ const Configurator = ({ testCaseSets, metricsPool, onConfigChange }) => {
 
   const handleOpenAIKeyChange = (e) => {
     setOpenAIKey(e.target.value);
-  
-    const fetchData = async () => {
-      const configuration = new Configuration({
-        apiKey: openAIKey,
-      });
-      const openai = new OpenAIApi(configuration);
-      const response = await openai.createCompletion({
-        model: "text-babbage-001",
-        prompt: "turn the following into a python list: 3 eggs a dozen stalks of celery 1 pound of sugar.",
-        temperature: 0,
-        max_tokens: 100,
-      });
-  
-      console.log(response);
-    };
-  
-    fetchData();
   };
+  
+  
+  
+  useEffect(() => {
+    const fetchData = async (key) => {
+      if (key == '') {
+        return;
+      }
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model: 'text-babbage-001',
+          prompt: 'turn the following into a python list: 3 eggs a dozen stalks of celery 1 pound of sugar.',
+          temperature: 0,
+          max_tokens: 100,
+        }),
+      };
+  
+      try {
+        const response = await fetch('https://api.openai.com/v1/completions', requestOptions);
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData(openAIKey)
+  }, [openAIKey]);
 
   const handleTestCaseSetChange = (e) => {
     setTestCaseSet(e.target.value);

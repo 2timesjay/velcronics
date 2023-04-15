@@ -24,8 +24,17 @@ const metricsPool = ['Metric 1', 'Metric 2', 'Metric 3'];
 function App() {
   const [columns, setColumns] = React.useState([]);
   const [data, setData] = React.useState([]);
+  const [openai, setOpenAI] = React.useState(null);
 
-  const handleConfigChange = (testCaseSet, selectedMetrics) => {
+  const handleConfigChange = (openAIKey, testCaseSet, selectedMetrics) => {
+    if(openAIKey != '') {
+      const configuration = new Configuration({
+        apiKey: openAIKey,
+      });
+      const openai = new OpenAIApi(configuration);
+      setOpenAI(openai);
+    }
+    
     const newColumns = [
       { Header: 'ID', accessor: 'id' },
       { Header: 'Question', accessor: 'question' },
@@ -51,6 +60,37 @@ function App() {
     }
   };  
 
+  const fetchData = async (data, key) => {
+    if (key == '') {
+      return;
+    }
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model: 'text-babbage-001',
+        prompt: 'turn the following into a python list: 3 eggs a dozen stalks of celery 1 pound of sugar.',
+        temperature: 0,
+        max_tokens: 100,
+      }),
+    };
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/completions', requestOptions);
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+  };
+
   return (
     <div className="App">
       <Configurator
@@ -59,6 +99,9 @@ function App() {
         onConfigChange={handleConfigChange}
       />
       <ComparisonTable columns={columns} data={data} />
+      <form onSubmit={handleSubmit}>
+        <button type="submit">Evaluate</button>
+      </form>
     </div>
   );
 }
