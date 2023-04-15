@@ -26,6 +26,7 @@ function App() {
   const [columns, setColumns] = React.useState([]);
   const [data, setData] = React.useState([]);
   const [openai, setOpenAI] = React.useState(null);
+  const [focusedRowId, setFocusedRowId] = React.useState(null);
 
   const handleConfigChange = (openAIKey, testCaseSet, selectedMetrics) => {
     if(openAIKey != '') {
@@ -75,7 +76,7 @@ function App() {
         metricsPool={metricsPool}
         onConfigChange={handleConfigChange}
       />
-      <ComparisonTable columns={columns} data={data} />
+      <ComparisonTable columns={columns} data={data} focusedRowId={focusedRowId} setFocusedRowId={setFocusedRowId} />
       <form onSubmit={handleSubmit}>
         <button type="submit">Evaluate</button>
       </form>
