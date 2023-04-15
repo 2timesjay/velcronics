@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import Configurator from './components/Configurator';
 import ComparisonTable from './components/ComparisonTable';
+import callLLM from './utils/Caller';
 
 const testCaseSets = {
   'Set 1': [
@@ -28,11 +29,7 @@ function App() {
 
   const handleConfigChange = (openAIKey, testCaseSet, selectedMetrics) => {
     if(openAIKey != '') {
-      const configuration = new Configuration({
-        apiKey: openAIKey,
-      });
-      const openai = new OpenAIApi(configuration);
-      setOpenAI(openai);
+      setOpenAI(openAIKey);
     }
     
     const newColumns = [
@@ -60,35 +57,15 @@ function App() {
     }
   };  
 
-  const fetchData = async (data, key) => {
-    if (key == '') {
-      return;
-    }
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model: 'text-babbage-001',
-        prompt: 'turn the following into a python list: 3 eggs a dozen stalks of celery 1 pound of sugar.',
-        temperature: 0,
-        max_tokens: 100,
-      }),
-    };
-
-    try {
-      const response = await fetch('https://api.openai.com/v1/completions', requestOptions);
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    callLLM("Give me an idea, any idea!", openai)
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   return (

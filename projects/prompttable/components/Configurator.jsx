@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import { Configuration, OpenAIApi } from 'openai';
 
 const Configurator = ({ testCaseSets, metricsPool, onConfigChange }) => {
   const [testCaseSet, setTestCaseSet] = React.useState('');
