@@ -20,6 +20,7 @@ const callLLM = async (prompt, key) => {
     const response = await fetch('https://api.openai.com/v1/completions', requestOptions);
     const data = await response.json();
     console.log(data);
+    return data.choices[0].text;
   } catch (error) {
     console.error('Error fetching data:', error);
   }

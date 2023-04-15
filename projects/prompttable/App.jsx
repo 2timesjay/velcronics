@@ -60,13 +60,24 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    callLLM("Give me an idea, any idea!", openai)
-      .then(result => {
-        console.log(result);
-      })
-      .catch(error => {
-        console.error(error);
+    // Call LLM for each row
+    const results_promise = Promise.all(data.map((row) => callLLM(row.question, openai)))
+    // Set response column with results from LLM
+    results_promise
+      .then(results => {
+        console.log(results)
+        console.log(data.map((row, idx) => { return {...row, baseline: results[idx]}}))
+        setData(data.map((row, idx) => { return {...row, baseline: results[idx]}}))
+      }).catch(error => {
+        console.error(error)
       });
+    // callLLM("Give me an idea, any idea!", openai)
+    //   .then(result => {
+    //     console.log(result);
+    //   })
+    //   .catch(error => {
+    //     console.error(error);
+    //   });
   };
 
   return (
