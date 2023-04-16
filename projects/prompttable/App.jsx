@@ -3,7 +3,9 @@ import './App.css';
 import Configurator from './components/Configurator';
 import ComparisonTable from './components/ComparisonTable';
 import callLLM from './utils/Caller';
-import { useCSVDownloader, useCSVReader } from 'react-papaparse';
+import { useCSVDownloader} from 'react-papaparse';
+import { usePapaParse } from 'react-papaparse';
+
 
 const testCaseSets = {
   'Set 1': [
@@ -29,16 +31,18 @@ function App() {
   const [openai, setOpenAI] = React.useState(null);
   const [focusedRowId, setFocusedRowId] = React.useState(null);
 
-  const uploadCSVToTable = (results) => {
-    const uploadedData = results.data.slice(1).map((row, index) => {
-      const rowData = {};
-      row.data.forEach((cell, cellIndex) => {
-        rowData[columns[cellIndex].accessor] = cell;
-      });
-      return rowData;
+  const handleCSVUpload = (event) => {
+    const { readString } = usePapaParse();
+    const file = event.target.files[0];
+  
+    console.log(file);
+    readString(file, {
+      header: true,
+      dynamicTyping: true,
+      complete: function (results) {
+        setData(results.data);
+      },
     });
-
-    setData(uploadedData);
   };
 
   const handleConfigChange = (openAIKey, testCaseSet, selectedMetrics) => {
@@ -98,10 +102,6 @@ function App() {
     setColumns(newColumns);
   }
 
-  // React.useEffect(() => {
-  //   refreshColumns([]);
-  // }, [data]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     // Call LLM for each row
@@ -115,16 +115,8 @@ function App() {
       }).catch(error => {
         console.error(error)
       });
-    // callLLM("Give me an idea, any idea!", openai)
-    //   .then(result => {
-    //     console.log(result);
-    //   })
-    //   .catch(error => {
-    //     console.error(error);
-    //   });
   };
 
-  const { CSVReader } = useCSVReader();
   const { CSVDownloader, Type } = useCSVDownloader();
 
   return (
@@ -146,18 +138,12 @@ function App() {
       >
         <span>Download as CSV</span>
       </CSVDownloader>
-      {/* <CSVReader onDrop={uploadCSVToTable} addRemoveButton>
-        <span>Upload CSV to Table</span>
-      </CSVReader> */}
-      {/* <CSVReader
-        onUploadAccepted={(results) => {
-          console.log('---------------------------');
-          console.log(results);
-          console.log('---------------------------');
-        }}
-      >
-        <span>Upload CSV to Table</span>
-      </CSVReader> */}
+      <input
+        type="file"
+        id="csvUpload"
+        accept=".csv"
+        onChange={handleCSVUpload}
+      />
       <form onSubmit={handleSubmit}>
         <button type="submit">Evaluate</button>
       </form>
