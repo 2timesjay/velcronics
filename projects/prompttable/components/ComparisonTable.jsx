@@ -1,7 +1,13 @@
 import React from 'react';
 import { useTable } from 'react-table';
+import './ComparisonTable.css';
 
-const ComparisonTable = ({ columns, data, focusedRowId, setFocusedRowId }) => {
+const ComparisonTable = ({
+  columns,
+  data,
+  focusedRowId,
+  setFocusedRowId,
+}) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -10,31 +16,21 @@ const ComparisonTable = ({ columns, data, focusedRowId, setFocusedRowId }) => {
     prepareRow,
   } = useTable({ columns, data });
 
-  const getCellValue = (cell) => {
-    if (cell.column.id === 'question' || cell.column.id === 'baseline' || cell.column.id === 'variant') {
-      return cell.row.id === focusedRowId ? (
-        <pre style={{whiteSpace: 'normal'}}>{cell.value}</pre>
-      ) : (
-        <div style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{cell.value}</div>
-      );
-    } else {
-      return cell.render('Cell');
-    }
-  };
-
   return (
-    <table {...getTableProps()} style={{ width: '100%', textAlign: 'left' }}>
+    <table {...getTableProps()} className="comparison-table">
       <thead>
-        {headerGroups.map(headerGroup => (
+        {headerGroups.map((headerGroup) => (
           <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+            {headerGroup.headers.map((column) => (
+              <th {...column.getHeaderProps()} className="comparison-table-header">
+                {column.render('Header')}
+              </th>
             ))}
           </tr>
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
+        {rows.map((row) => {
           prepareRow(row);
           return (
             <tr
@@ -42,8 +38,16 @@ const ComparisonTable = ({ columns, data, focusedRowId, setFocusedRowId }) => {
               onMouseEnter={() => setFocusedRowId(row.id)}
               onMouseLeave={() => setFocusedRowId(null)}
             >
-              {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{getCellValue(cell)}</td>;
+              {row.cells.map((cell) => {
+                const isFocused = row.id === focusedRowId;
+                const isQuestionOrResponse = cell.column.id === 'question' || cell.column.id === 'baseline' || cell.column.id === 'variant';
+                const className = isQuestionOrResponse ? (isFocused ? 'pretty-print-cell' : 'compact-cell') : '';
+
+                return (
+                  <td {...cell.getCellProps()} className={`comparison-table-cell ${className}`}>
+                    {cell.render('Cell')}
+                  </td>
+                );
               })}
             </tr>
           );

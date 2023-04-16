@@ -32,7 +32,28 @@ function App() {
     if(openAIKey != '') {
       setOpenAI(openAIKey);
     }
-    
+
+    refreshColumns(selectedMetrics);
+  
+    // Fetch data based on the selected test case set
+    if (testCaseSet) {
+      setData(testCaseSets[testCaseSet]);
+    } else {
+      setData([]);
+    }
+  };  
+
+  const handleUserInputChange = (rowId, value) => {
+    const newData = data.map(row => {
+      if (row.id === rowId) {
+        return { ...row, userInput: value };
+      }
+      return row;
+    });
+    setData(newData);
+  };
+
+  const refreshColumns = (selectedMetrics) => {
     const newColumns = [
       { Header: 'ID', accessor: 'id' },
       { Header: 'Question', accessor: 'question' },
@@ -47,16 +68,25 @@ function App() {
         { Header: `${metric} Delta`, accessor: `${metric.toLowerCase().replace(' ', '')}_delta` },
       );
     });
-  
+    newColumns.push(
+      {
+        Header: 'User Input',
+        accessor: 'userInput',
+        Cell: ({ row, value }) => (
+          <input
+            type="text"
+            value={value || ''}
+            // onChange={e => handleUserInputChange(row.id, e.target.value)}
+          />
+        ),
+      }
+    )
     setColumns(newColumns);
-  
-    // Fetch data based on the selected test case set
-    if (testCaseSet) {
-      setData(testCaseSets[testCaseSet]);
-    } else {
-      setData([]);
-    }
-  };  
+  }
+
+  // React.useEffect(() => {
+  //   refreshColumns([]);
+  // }, [data]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
