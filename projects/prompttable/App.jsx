@@ -30,6 +30,8 @@ function App() {
   const [data, setData] = React.useState([]);
   const [openai, setOpenAI] = React.useState(null);
   const [focusedRowId, setFocusedRowId] = React.useState(null);
+  const [selectedMetrics, setSelectedMetrics] = React.useState([]);
+  const [prompts, setPrompts] = React.useState(new Map());
 
   const handleCSVUpload = (event) => {
     const { readString } = usePapaParse();
@@ -40,12 +42,14 @@ function App() {
       header: true,
       dynamicTyping: true,
       complete: function (results) {
+        console.log(results.data);
         setData(results.data);
+        refreshColumns(selectedMetrics);
       },
     });
   };
 
-  const handleConfigChange = (openAIKey, testCaseSet, selectedMetrics) => {
+  const handleConfigChange = (openAIKey, testCaseSet) => {
     if(openAIKey != '') {
       setOpenAI(openAIKey);
     }
@@ -125,11 +129,15 @@ function App() {
         testCaseSets={testCaseSets}
         metricsPool={metricsPool}
         onConfigChange={handleConfigChange}
+        selectedMetrics={selectedMetrics}
+        setSelectedMetrics={setSelectedMetrics}
+        prompts={prompts}
+        setPrompts={setPrompts}
       />
       <ComparisonTable columns={columns} data={data} focusedRowId={focusedRowId} setFocusedRowId={setFocusedRowId} />
       <CSVDownloader
         type={Type.Button}
-        filename={'table-data.csv'}
+        filename={'table-data'}
         bom={true}
         config={{ // Do I have to escape commas inside cells?
           delimiter: ',',

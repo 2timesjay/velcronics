@@ -1,8 +1,13 @@
 import React, {useEffect} from 'react';
 
-const Configurator = ({ testCaseSets, metricsPool, onConfigChange }) => {
+const Configurator = ({ 
+  testCaseSets, 
+  metricsPool, 
+  onConfigChange,
+  selectedMetrics,
+  setSelectedMetrics
+}) => {
   const [testCaseSet, setTestCaseSet] = React.useState('');
-  const [selectedMetrics, setSelectedMetrics] = React.useState([]);
   const [openAIKey, setOpenAIKey] = React.useState('');
 
   const handleOpenAIKeyChange = (e) => {
