@@ -1,5 +1,6 @@
 import React from 'react';
-import './App.css';
+import ReactDataGrid from 'react-data-grid';
+// import './App.css';
 import Table from './Table';
 
 function App() {
@@ -23,8 +24,7 @@ function App() {
       },
     },
   ];
-
-
+  
   return (
     <div className="App">
       <Table
