@@ -5,7 +5,7 @@ function ThreeGallery() {
   return (
     <div className="ThreeGallery">
       <div>
-        <a href="/projects/visualizations/webgl_instancing_raycast/" target="_blank">
+        <a href="/projects/visualizations/webgl_instancing_raycast/">
           <img src="/three.png" className="logo three" alt="ThreeJS logo" />
         </a>
       </div>
