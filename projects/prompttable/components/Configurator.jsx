@@ -103,6 +103,7 @@ const Configurator = ({
           </label>
         ))}
       </fieldset>
+      
       <button type="submit">Confirm</button>
     </form>
   );
