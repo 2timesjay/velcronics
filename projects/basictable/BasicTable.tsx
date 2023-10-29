@@ -70,7 +70,7 @@ const DeltaCellFormatter: React.FC<DeltaCellFormatterProps> = ({ value, onChange
 //   return col;
 // })}
 
-function App() {  
+function BasicTable() {  
   const initialRows = [
     { id: 0, title: "Example", delta: -1 },
     { id: 1, title: "Demo", delta: 1 },
@@ -191,7 +191,7 @@ function App() {
   );
 
   return (
-    <div className="App" tabIndex={0}>
+    <div className="BasicTable" tabIndex={0}>
       <button onClick={saveChanges}>Save Changes</button>
       <button onClick={loadState}>Load State</button>
       <DataGrid
@@ -206,4 +206,4 @@ function App() {
   );
 }
 
-export default App;
+export default BasicTable;

@@ -13,4 +13,4 @@ function ThreeGallery() {
   )
 }
 
-export default ThreeGallery
+export default ThreeGallery;
