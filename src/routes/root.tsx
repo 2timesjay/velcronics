@@ -42,13 +42,13 @@ function Root() {
           <Link to="/projects/botorch">
             <img src="/botorch.png" className="logo" title="Botorch and Ax Projects" height="256px" alt="Botorch and Ax Projects" />
           </Link>
-          <Link to="/projects/sidebysidetable">
+          <Link to="/projects/uidemos/sidebysidetable">
             <img src="/react_logo.png" className="logo" title="Single Page Webapp" height="256px" alt="Single Page Webapp" />
           </Link>
-          <Link to="/projects/basictable">
+          <Link to="/projects/uidemos/basictable">
             <img src="/react_logo.png" className="logo" title="Single Page Webapp" height="256px" alt="Single Page Webapp" />
           </Link>
-          <Link to="/projects/prompttable">
+          <Link to="/projects/uidemos/prompttable">
             <img src="/react_logo.png" className="logo" title="Single Page Webapp" height="256px" alt="Single Page Webapp" />
           </Link>
         </div>
@@ -57,9 +57,9 @@ function Root() {
           <Route path="/personal" element={<Personal />} />
           <Route path="/projects/BoTorch" element={<BoTorch />} />
           <Route path="/projects/visualizations" element={<ThreeGallery />} />
-          <Route path="/projects/basictable" element={<BasicTable />} />
-          <Route path="/projects/prompttable" element={<PromptTable />} />
-          <Route path="/projects/sidebysidetable" element={<SideBySideTable />} />
+          <Route path="/projects/uidemos/basictable" element={<BasicTable />} />
+          <Route path="/projects/uidemos/prompttable" element={<PromptTable />} />
+          <Route path="/projects/uidemos/sidebysidetable" element={<SideBySideTable />} />
         </Routes>
       </div>
     </>
