@@ -12,6 +12,7 @@ import SideBySideTable from "../../projects/sidebysidetable/SideBySideTable";
 import ThreeGallery from "./projects/visualizations/ThreeGallery";
 import BoTorch from "../../projects/botorch/BoTorch";
 import IFrameDemo from "../components/IFrameDemo";
+import WebcamDisplay from "../components/WebcamDisplay";
 
 function Root() {
   return (
@@ -51,6 +52,9 @@ function Root() {
           <Link to="/projects/uidemos/prompttable">
             <img src="/react_logo.png" className="logo" title="Single Page Webapp" height="256px" alt="Single Page Webapp" />
           </Link>
+          <Link to="/projects/visiondemos/webcam">
+            <img src="/kornia_logo.png" className="logo" title="Vision Projects" height="256px" alt="Computer Vision Projects" />
+          </Link>
         </div>
         <Routes>
           <Route path="/books" element={<Books />} />
@@ -60,6 +64,7 @@ function Root() {
           <Route path="/projects/uidemos/basictable" element={<BasicTable />} />
           <Route path="/projects/uidemos/prompttable" element={<PromptTable />} />
           <Route path="/projects/uidemos/sidebysidetable" element={<SideBySideTable />} />
+          <Route path="/projects/visiondemos/webcam" element={<WebcamDisplay />} />
         </Routes>
       </div>
     </>
