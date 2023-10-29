@@ -44,13 +44,13 @@ function Root() {
             <img src="/botorch.png" className="logo" title="Botorch and Ax Projects" height="256px" alt="Botorch and Ax Projects" />
           </Link>
           <Link to="/projects/uidemos/sidebysidetable">
-            <img src="/react_logo.png" className="logo" title="Single Page Webapp" height="256px" alt="Single Page Webapp" />
+            <img src="/react_logo.png" className="logo" title="A Demo React Table" height="256px" alt="A demo react table" />
           </Link>
           <Link to="/projects/uidemos/basictable">
-            <img src="/react_logo.png" className="logo" title="Single Page Webapp" height="256px" alt="Single Page Webapp" />
+            <img src="/react_logo.png" className="logo" title="A Demo React Table" height="256px" alt="A demo react table" />
           </Link>
           <Link to="/projects/uidemos/prompttable">
-            <img src="/react_logo.png" className="logo" title="Single Page Webapp" height="256px" alt="Single Page Webapp" />
+            <img src="/react_logo.png" className="logo" title="A Demo React Table" height="256px" alt="A demo react table" />
           </Link>
           <Link to="/projects/visiondemos/webcam">
             <img src="/kornia_logo.png" className="logo" title="Vision Projects" height="256px" alt="Computer Vision Projects" />
