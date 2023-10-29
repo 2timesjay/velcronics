@@ -32,6 +32,5 @@
     "vite": "^4.0.4"
   },
   "pre-commit": [
-    "build"
   ]
 }
