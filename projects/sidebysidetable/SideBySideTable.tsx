@@ -3,7 +3,7 @@ import ReactDataGrid from 'react-data-grid';
 // import './App.css';
 import Table from './Table';
 
-function App() {
+function SideBySideTable() {
   const columnNames = ['A', 'B', 'C', 'D'];
   const columnValues = [
     [
@@ -37,4 +37,4 @@ function App() {
   );
 }
 
-export default App;
+export default SideBySideTable;

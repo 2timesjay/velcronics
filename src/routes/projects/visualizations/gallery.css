@@ -30,7 +30,7 @@ to {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-.logo {
+.logo.three {
     animation: logo-spin infinite 20s linear;
 }
 }

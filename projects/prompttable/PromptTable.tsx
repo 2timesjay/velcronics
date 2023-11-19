@@ -1,8 +1,8 @@
 import React from 'react';
-import './App.css';
+import './PromptTable.css';
 import Configurator from './components/Configurator';
 import ComparisonTable from './components/ComparisonTable';
-import callLLM from './utils/Caller';
+import callLLM from '../../src/components/utils/Caller';
 import { useCSVDownloader} from 'react-papaparse';
 import { usePapaParse } from 'react-papaparse';
 
@@ -25,7 +25,7 @@ const testCaseSets = {
 const metricsPool = ['Metric 1', 'Metric 2', 'Metric 3'];
 
 
-function App() {
+function PromptTable() {
   const [columns, setColumns] = React.useState([]);
   const [data, setData] = React.useState([]);
   const [openai, setOpenAI] = React.useState(null);
@@ -124,7 +124,7 @@ function App() {
   const { CSVDownloader, Type } = useCSVDownloader();
 
   return (
-    <div className="App">
+    <div className="PromptTable">
       <Configurator
         testCaseSets={testCaseSets}
         metricsPool={metricsPool}
@@ -159,4 +159,4 @@ function App() {
   );
 }
 
-export default App;
+export default PromptTable;

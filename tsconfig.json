@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -15,5 +16,5 @@
     "noImplicitReturns": true,
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src", "projects/botorch", "src/components/utils", "content/books", "content/personal", "projects/basictable", "projects/prompttable/components", "projects/prompttable/PromptTable.tsx", "projects/sidebysidetable"]
 }

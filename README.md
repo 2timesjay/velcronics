@@ -1,5 +1,9 @@
 # velcronics
 Applied Velcronics
 
-# run
+# Development
+```
+npm install latest
+npm i
 npm run dev
+```
