@@ -43,6 +43,7 @@ const WebcamDisplay = () => {
 
   return (
     <>
+      <div>WebCam + Inversion Effect</div>
       <video id="webcam" ref={videoRef} width="640" height="480" autoPlay style={{ display: 'none' }} />
       <canvas id="canvas" ref={canvasRef} width="640" height="480" />
     </>
