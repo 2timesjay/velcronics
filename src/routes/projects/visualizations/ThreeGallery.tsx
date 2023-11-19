@@ -1,4 +1,4 @@
-import '../shared/App.css'
+import './gallery.css'
 import React from 'react';
 
 function ThreeGallery() {
